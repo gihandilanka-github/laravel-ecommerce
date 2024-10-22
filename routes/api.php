@@ -1,13 +1,12 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\v1\HomeController;
-use App\Http\Controllers\Api\v1\AuthController;
-use App\Http\Controllers\Api\v1\RoleController;
-use App\Http\Controllers\Api\v1\UserController;
-use App\Http\Controllers\Api\v1\PermissionController;
-use App\Http\Controllers\Api\v1\UserRoleController;
-use App\Http\Controllers\Api\v1\ModuleController;
+use App\Http\Controllers\Api\v1\Auth\AuthController;
+use App\Http\Controllers\Api\v1\Auth\RoleController;
+use App\Http\Controllers\Api\v1\User\UserController;
+use App\Http\Controllers\Api\v1\Auth\PermissionController;
+use App\Http\Controllers\Api\v1\User\UserRoleController;
+use App\Http\Controllers\Api\v1\Auth\ModuleController;
 
 Route::middleware(['api', 'throttle:10,1'])->prefix('v1')->group(function () {
 
@@ -24,7 +23,6 @@ Route::middleware(['api', 'throttle:10,1'])->prefix('v1')->group(function () {
     Route::post('/oauth/token', [AuthController::class, 'authToken']);
     Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
     Route::post('/reset-password', [AuthController::class, 'resetPassword']);
-    Route::post('contact', [HomeController::class, 'contact']);
 });
 
 Route::middleware(['auth:api'])->prefix('v1')->group(function () {
