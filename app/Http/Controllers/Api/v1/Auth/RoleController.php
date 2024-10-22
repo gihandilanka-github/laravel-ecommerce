@@ -8,7 +8,7 @@ use App\Models\Role;
 use App\Http\Requests\RoleStoreRequest;
 use App\Http\Requests\RoleUpdateRequest;
 use App\Http\Resources\RoleResource;
-use App\Services\RoleService;
+use App\Services\Auth\RoleService;
 use App\Http\Requests\RoleIndexRequest;
 
 class RoleController extends Controller

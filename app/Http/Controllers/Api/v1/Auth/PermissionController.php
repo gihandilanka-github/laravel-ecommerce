@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api\v1\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\PermissionIndexRequest;
-use App\Services\PermissionService;
+use App\Services\Auth\PermissionService;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Permission;
 

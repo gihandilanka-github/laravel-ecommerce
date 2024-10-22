@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Repositories;
+namespace App\Repositories\Auth;
 
 use App\Models\Permission;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
+use App\Repositories\BaseRepository;
 
 class PermissionRepository extends BaseRepository
 {
