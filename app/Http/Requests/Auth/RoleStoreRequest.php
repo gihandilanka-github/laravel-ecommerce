@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Auth;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class RoleRevokeRequest extends FormRequest
+class RoleStoreRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -14,12 +14,14 @@ class RoleRevokeRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'role' => 'required|exists:roles,name',
+            'name' => 'required|string|max:255|unique:roles,name',
         ];
     }
 
     public function messages(): array
     {
-        return [];
+        return [
+            'name.required' => 'The name field is required.',
+        ];
     }
 }

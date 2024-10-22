@@ -5,11 +5,11 @@ namespace App\Http\Controllers\Api\v1\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\Role;
-use App\Http\Requests\RoleStoreRequest;
-use App\Http\Requests\RoleUpdateRequest;
+use App\Http\Requests\Auth\RoleStoreRequest;
+use App\Http\Requests\Auth\RoleUpdateRequest;
 use App\Http\Resources\RoleResource;
 use App\Services\Auth\RoleService;
-use App\Http\Requests\RoleIndexRequest;
+use App\Http\Requests\Auth\RoleIndexRequest;
 
 class RoleController extends Controller
 {

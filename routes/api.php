@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\v1\User\UserController;
 use App\Http\Controllers\Api\v1\Auth\PermissionController;
 use App\Http\Controllers\Api\v1\User\UserRoleController;
 use App\Http\Controllers\Api\v1\Auth\ModuleController;
+use App\Http\Controllers\Api\v1\Product\ProductController;
 
 Route::middleware(['api', 'throttle:10,1'])->prefix('v1')->group(function () {
 
@@ -35,6 +36,7 @@ Route::middleware(['auth:api'])->prefix('v1')->group(function () {
         Route::apiResource('permissions', PermissionController::class);
         Route::post('users/{user}/assign-role', [UserRoleController::class, 'assignRole']);
         Route::post('users/{user}/revoke-role', [UserRoleController::class, 'revokeRole']);
+        Route::apiResource('products', ProductController::class);
     });
 
     Route::apiResource('modules', ModuleController::class);

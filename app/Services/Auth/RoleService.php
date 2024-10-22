@@ -2,7 +2,7 @@
 
 namespace App\Services\Auth;
 
-use App\Repositories\RoleRepository;
+use App\Repositories\Auth\RoleRepository;
 
 class RoleService
 {

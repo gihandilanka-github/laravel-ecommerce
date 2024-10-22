@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Auth;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UserIndexRequest extends FormRequest
+class RoleIndexRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -17,7 +17,6 @@ class UserIndexRequest extends FormRequest
             'sortOrder' => 'sometimes|in:asc,desc',
             'sortBy' => 'sometimes|in:id,name,email,created_at',
             'name' => 'sometimes|string|max:255',
-            'email' => 'sometimes|string|max:255',
         ];
     }
 
