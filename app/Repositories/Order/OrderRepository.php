@@ -4,6 +4,9 @@ namespace App\Repositories\Order;
 
 use App\Events\OrderCreated;
 use App\Events\OrderStatusUpdated;
+use App\Exceptions\InsufficientStockException;
+use App\Exceptions\OrderException;
+use App\Exceptions\PaymentFailedException;
 use App\Repositories\BaseRepository;
 use App\Models\Order;
 use App\Models\Product;
@@ -45,6 +48,17 @@ class OrderRepository extends BaseRepository
         DB::beginTransaction();
         try {
 
+            foreach ($request['items'] as $item) {
+                $product = Product::findOrFail($item['product_id']);
+                if ($product->stock_quantity < $item['quantity']) {
+                    throw new InsufficientStockException(
+                        $product->name,
+                        $item['quantity'],
+                        $product->stock_quantity
+                    );
+                }
+            }
+
             $order = Order::create([
                 'user_id' => $user->id,
                 'shipping_address' => $request['shipping_address'],
@@ -66,9 +80,20 @@ class OrderRepository extends BaseRepository
                     'unit_price' => $product->price,
                     'subtotal' => $subtotal,
                 ]);
+
+                $product->decrement('stock_quantity', $item['quantity']);
             }
 
             $order->update(['total_price' => $total]);
+
+            try {
+                $this->processPayment($order, $request['payment_method']);
+            } catch (Throwable $e) {
+                throw new PaymentFailedException(
+                    $e->getMessage(),
+                    $e->getCode()
+                );
+            }
 
             event(new OrderCreated($order));
 
@@ -77,8 +102,19 @@ class OrderRepository extends BaseRepository
             return $order;
         } catch (Throwable $ex) {
             DB::rollback();
-            dd($ex->getMessage());
+            if ($ex instanceof OrderException) {
+                throw $ex;
+            }
+
+            report($ex);
+            throw $ex;
         }
+    }
+
+    private function processPayment(Order $order, string $paymentMethod): void
+    {
+        // Payment processing logic here
+        // Throws PaymentFailedException if payment fails
     }
 
     public function updateStatus(Order $order, string $status): Order
