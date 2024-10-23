@@ -7,6 +7,7 @@ use App\Http\Requests\Order\OrderCreateRequest;
 use App\Http\Requests\Order\OrderIndexRequest;
 use App\Http\Resources\Order\OrderResource;
 use App\Services\Order\OrderService;
+use Illuminate\Http\JsonResponse;
 
 class OrderController extends Controller
 {
@@ -19,6 +20,6 @@ class OrderController extends Controller
 
     public function store(OrderCreateRequest $request)
     {
-        return new OrderResource($this->orderService->store($request->validated()));
+        return new OrderResource($this->orderService->createOrder($request->user(), $request->validated()));
     }
 }

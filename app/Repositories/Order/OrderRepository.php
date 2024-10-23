@@ -40,7 +40,7 @@ class OrderRepository extends BaseRepository
         return $orders->paginate($request['limit']);
     }
 
-    public function create(User $user, array $request)
+    public function createOrder(User $user, array $request)
     {
         DB::beginTransaction();
         try {
@@ -51,6 +51,7 @@ class OrderRepository extends BaseRepository
                 'billing_address' => $request['billing_address'],
                 'status' => 'pending',
                 'payment_status' => 'pending',
+                'total_price' => 0
             ]);
 
             $total = 0;
@@ -67,9 +68,9 @@ class OrderRepository extends BaseRepository
                 ]);
             }
 
-            $order->update(['total_amount' => $total]);
+            $order->update(['total_price' => $total]);
 
-            OrderCreated::dispatch($order);
+            event(new OrderCreated($order));
 
             DB::commit();
 
