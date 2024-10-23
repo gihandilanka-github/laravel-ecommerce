@@ -2,11 +2,12 @@
 
 namespace App\Repositories\Order;
 
+use App\Enums\OrderStatus;
+use App\Enums\PaymentStatus;
 use App\Events\OrderCreated;
 use App\Events\OrderStatusUpdated;
-use App\Exceptions\InsufficientStockException;
-use App\Exceptions\InvalidOrderStatusTransitionException;
-use App\Exceptions\OrderException;
+use App\Exceptions\Order\InsufficientStockException;
+use App\Exceptions\Order\InvalidOrderStatusTransitionException;
 use App\Exceptions\PaymentFailedException;
 use App\Repositories\BaseRepository;
 use App\Models\Order;
@@ -15,6 +16,7 @@ use App\Models\Product;
 use App\Models\User;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\DB;
 use Throwable;
 
@@ -74,8 +76,8 @@ class OrderRepository extends BaseRepository
                 'user_id' => $user->id,
                 'shipping_address' => $request['shipping_address'],
                 'billing_address' => $request['billing_address'],
-                'status' => 'pending',
-                'payment_status' => 'pending',
+                'status' => OrderStatus::PENDING,
+                'payment_status' => PaymentStatus::PENDING,
                 'total_price' => 0
             ]);
 
@@ -129,7 +131,7 @@ class OrderRepository extends BaseRepository
                 'order_id' => $order->id,
                 'payment_method' => $paymentMethod,
                 'amount' => $order->total_price,
-                'status' => 'penging'
+                'status' => PaymentStatus::PENDING
             ]);
 
             logger()->info('Payment created', [
@@ -147,9 +149,13 @@ class OrderRepository extends BaseRepository
         return in_array($newStatus, self::ALLOWED_STATUS_TRANSITIONS[$currentStatus] ?? []);
     }
 
-    public function updateStatus(Order $order, string $status): Order
+    public function updateOrderStatus(int $orderId, string $status): Order
     {
         try {
+            $order = Order::find($orderId);
+            if (!$order) {
+                throw new ModelNotFoundException("Order not found for orderId:" . $orderId);
+            }
             $currentStatus = $order->status;
 
             if (!$this->isValidStatusTransition($currentStatus, $status)) {

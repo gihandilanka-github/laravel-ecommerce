@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Exceptions;
+namespace App\Exceptions\Order;
 
 class InvalidOrderStatusTransitionException extends OrderException
 {

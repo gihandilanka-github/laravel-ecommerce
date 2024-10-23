@@ -42,4 +42,5 @@ Route::middleware(['auth:api'])->prefix('v1')->group(function () {
 
     Route::apiResource('modules', ModuleController::class);
     Route::apiResource('orders', OrderController::class);
+    Route::put('update-order-status/{orderId}', [OrderController::class, 'updateOrderStatus']);
 });

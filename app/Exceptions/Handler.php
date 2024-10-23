@@ -2,6 +2,7 @@
 
 namespace App\Exceptions;
 
+use App\Exceptions\Order\OrderException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
@@ -18,16 +19,14 @@ class Handler extends ExceptionHandler
         OrderValidationException::class,
     ];
 
-    public function register(): void
+    public function render($request, Throwable $exception)
     {
         $this->reportable(function (Throwable $e) {
-            // Add any custom reporting logic here
             if (app()->bound('sentry')) {
                 app('sentry')->captureException($e);
             }
         });
 
-        // Convert all exceptions to JSON for API requests
         $this->renderable(function (Throwable $e, Request $request) {
             if ($request->expectsJson()) {
                 return $this->handleApiException($e);
@@ -39,7 +38,7 @@ class Handler extends ExceptionHandler
     {
         return match (true) {
             $exception instanceof ValidationException => $this->handleValidationException($exception),
-            $exception instanceof ModelNotFoundException,
+            $exception instanceof ModelNotFoundException => $this->handleModelNotFoundException($exception),
             $exception instanceof NotFoundHttpException => $this->handleNotFoundException($exception),
             $exception instanceof AuthenticationException => $this->handleAuthenticationException($exception),
             $exception instanceof TooManyRequestsHttpException => $this->handleRateLimitException($exception),
@@ -60,6 +59,14 @@ class Handler extends ExceptionHandler
     {
         return response()->json([
             'message' => 'Resource not found.',
+            'error' => 'NOT_FOUND',
+        ], 404);
+    }
+
+    private function handleModelNotFoundException(Throwable $exception): JsonResponse
+    {
+        return response()->json([
+            'message' => 'Model not found.',
             'error' => 'NOT_FOUND',
         ], 404);
     }
