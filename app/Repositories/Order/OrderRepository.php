@@ -5,10 +5,12 @@ namespace App\Repositories\Order;
 use App\Events\OrderCreated;
 use App\Events\OrderStatusUpdated;
 use App\Exceptions\InsufficientStockException;
+use App\Exceptions\InvalidOrderStatusTransitionException;
 use App\Exceptions\OrderException;
 use App\Exceptions\PaymentFailedException;
 use App\Repositories\BaseRepository;
 use App\Models\Order;
+use App\Models\Payment;
 use App\Models\Product;
 use App\Models\User;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
@@ -18,6 +20,15 @@ use Throwable;
 
 class OrderRepository extends BaseRepository
 {
+    private const ALLOWED_STATUS_TRANSITIONS = [
+        'pending' => ['processing', 'cancelled'],
+        'processing' => ['shipped', 'cancelled'],
+        'shipped' => ['delivered', 'returned'],
+        'delivered' => ['returned'],
+        'returned' => [],
+        'cancelled' => [],
+    ];
+
     public function __construct(protected Order $order) {}
 
     public function index(array $request): Collection|LengthAwarePaginator
@@ -99,13 +110,13 @@ class OrderRepository extends BaseRepository
 
             DB::commit();
 
+            logger()->info('Order created', [
+                'order_id'   => $order->id
+            ]);
+
             return $order;
         } catch (Throwable $ex) {
             DB::rollback();
-            if ($ex instanceof OrderException) {
-                throw $ex;
-            }
-
             report($ex);
             throw $ex;
         }
@@ -113,16 +124,48 @@ class OrderRepository extends BaseRepository
 
     private function processPayment(Order $order, string $paymentMethod): void
     {
-        // Payment processing logic here
-        // Throws PaymentFailedException if payment fails
+        try {
+            $payment = Payment::create([
+                'order_id' => $order->id,
+                'payment_method' => $paymentMethod,
+                'amount' => $order->total_price,
+                'status' => 'penging'
+            ]);
+
+            logger()->info('Payment created', [
+                'payment_id' => $payment->id,
+                'order_id'   => $order->id
+            ]);
+        } catch (Throwable $ex) {
+            report($ex);
+            throw $ex;
+        }
+    }
+
+    private function isValidStatusTransition(string $currentStatus, string $newStatus): bool
+    {
+        return in_array($newStatus, self::ALLOWED_STATUS_TRANSITIONS[$currentStatus] ?? []);
     }
 
     public function updateStatus(Order $order, string $status): Order
     {
-        $order->update(['status' => $status]);
+        try {
+            $currentStatus = $order->status;
 
-        OrderStatusUpdated::dispatch($order);
+            if (!$this->isValidStatusTransition($currentStatus, $status)) {
+                throw new InvalidOrderStatusTransitionException(
+                    $currentStatus,
+                    $status
+                );
+            }
 
-        return $order;
+            $order->update(['status' => $status]);
+            event(new OrderStatusUpdated($order));
+
+            return $order;
+        } catch (Throwable $ex) {
+            report($ex);
+            throw $ex;
+        }
     }
 }
