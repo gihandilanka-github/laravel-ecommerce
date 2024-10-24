@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Services\Product;
+namespace App\Services\Payment;
 
-use App\Repositories\Product\ProductRepository;
+use App\Repositories\Product\PaymentRepository;
 use Illuminate\Support\Arr;
 
-class ProductService
+class PaymentService
 {
-    public function __construct(protected ProductRepository  $productRepository) {}
+    public function __construct(protected PaymentRepository  $paymentRepository) {}
 
     public function index(array $request)
     {
@@ -26,7 +26,7 @@ class ProductService
         }
 
         logger()->info('ProductList: get data from database');
-        $products = $this->productRepository->index($request);
+        $products = $this->paymentRepository->index($request);
         putCache($productCacheListTag, $cacheKey, $products, config('constants.product.default_cache_time'));
 
         return $products;
@@ -34,16 +34,16 @@ class ProductService
 
     public function store(array $request)
     {
-        return $this->productRepository->create($request);
+        return $this->paymentRepository->create($request);
     }
 
     public function ensureUniqueSlug(string $slug, $id = null): string
     {
-        return $this->productRepository->ensureUniqueSlug($slug, $id);
+        return $this->paymentRepository->ensureUniqueSlug($slug, $id);
     }
 
     public function show(int $id)
     {
-        return $this->productRepository->show($id);
+        return $this->paymentRepository->show($id);
     }
 }

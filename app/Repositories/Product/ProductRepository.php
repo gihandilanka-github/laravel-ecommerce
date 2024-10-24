@@ -53,4 +53,9 @@ class ProductRepository extends BaseRepository
     {
         return $this->product->create($request);
     }
+
+    public function show(int $id): Product
+    {
+        return $this->product->find($id);
+    }
 }

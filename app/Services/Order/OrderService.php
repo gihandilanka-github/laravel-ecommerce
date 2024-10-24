@@ -43,4 +43,9 @@ class OrderService
     {
         return $this->orderRepository->updateOrderStatus($orderId, $status);
     }
+
+    public function show(int $id)
+    {
+        return $this->orderRepository->show($id);
+    }
 }

@@ -176,4 +176,9 @@ class OrderRepository extends BaseRepository
             throw $ex;
         }
     }
+
+    public function show(int $id): Order
+    {
+        return $this->order->find($id);
+    }
 }

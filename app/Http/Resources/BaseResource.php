@@ -9,7 +9,7 @@ class BaseResource extends JsonResource
 {
     public function toArray($request)
     {
-        return ["data" => $this->resource->toArray()];
+        return parent::toArray($request);
     }
 
     public function with($request)
@@ -36,6 +36,7 @@ class BaseResource extends JsonResource
             'store' => 'created',
             'update' => 'updated',
             'destroy' => 'deleted',
+            'show' => 'retrieved',
             default => 'processed',
         };
     }
