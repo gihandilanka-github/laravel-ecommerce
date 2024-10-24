@@ -8,7 +8,7 @@ use App\Events\OrderCreated;
 use App\Events\OrderStatusUpdated;
 use App\Exceptions\Order\InsufficientStockException;
 use App\Exceptions\Order\InvalidOrderStatusTransitionException;
-use App\Exceptions\PaymentFailedException;
+use App\Exceptions\Payment\PaymentFailedException;
 use App\Repositories\BaseRepository;
 use App\Models\Order;
 use App\Models\Payment;
@@ -18,6 +18,7 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Throwable;
 
 class OrderRepository extends BaseRepository
@@ -131,6 +132,7 @@ class OrderRepository extends BaseRepository
                 'order_id' => $order->id,
                 'payment_method' => $paymentMethod,
                 'amount' => $order->total_price,
+                'transaction_id' => Str::uuid(),
                 'status' => PaymentStatus::PENDING
             ]);
 

@@ -1,6 +1,8 @@
 <?php
 
-namespace App\Exceptions;
+namespace App\Exceptions\Payment;
+
+use App\Exceptions\Order\OrderException;
 
 class PaymentFailedException extends OrderException
 {
