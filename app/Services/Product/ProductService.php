@@ -17,4 +17,9 @@ class ProductService
     {
         return $this->productRepository->create($request);
     }
+
+    public function ensureUniqueSlug(string $slug, $id = null): string
+    {
+        return $this->productRepository->ensureUniqueSlug($slug, $id);
+    }
 }

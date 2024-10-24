@@ -34,6 +34,21 @@ class ProductRepository extends BaseRepository
         return $products->paginate($request['limit']);
     }
 
+    public function ensureUniqueSlug(string $slug, $id = null): string
+    {
+        $originalSlug = $slug;
+        $counter = 1;
+
+        while (Product::where('slug', $slug)->when($id, function ($query, $id) {
+            return $query->where('id', '!=', $id);
+        })->exists()) {
+            $slug = $originalSlug . '-' . $counter;
+            $counter++;
+        }
+
+        return $slug;
+    }
+
     public function create(array $request)
     {
         return $this->product->create($request);
