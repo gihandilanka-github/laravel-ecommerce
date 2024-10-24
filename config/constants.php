@@ -7,4 +7,12 @@ return [
         'default_cache_tag_prefix' => 'Product:',
         'default_cache_time'       => 60 * 10,
     ],
+    'order' => [
+        'default_cache_tag_prefix' => 'Order:',
+        'default_cache_time'       => 60 * 10,
+    ],
+    'user' => [
+        'default_cache_tag_prefix' => 'User:',
+        'default_cache_time'       => 60 * 10,
+    ],
 ];
