@@ -1,0 +1,60 @@
+graph TB
+    subgraph Client Layer
+        MC[Mobile Client]
+        WC[Web Client]
+    end
+
+    subgraph API Gateway Layer
+        AG[API Gateway/Routes]
+        RT[Rate Limiter]
+        AT[JWT Auth]
+    end
+
+    subgraph Application Layer
+        subgraph Core Modules
+            UM[User Module]
+            PM[Product Module]
+            OM[Order Module]
+            NM[Notification Module]
+        end
+        
+        subgraph Services
+            PS[Payment Service]
+            CS[Cache Service]
+            ES[Event Service]
+            QS[Queue Service]
+        end
+    end
+
+    subgraph Data Layer
+        subgraph Storage
+            DB[(MySQL)]
+            RC[(Redis Cache)]
+        end
+        
+        subgraph Queue
+            RQ[Redis Queue]
+        end
+    end
+
+    MC --> AG
+    WC --> AG
+    AG --> RT
+    RT --> AT
+    AT --> UM
+    AT --> PM
+    AT --> OM
+    
+    UM --> DB
+    PM --> DB
+    OM --> DB
+    
+    PM --> RC
+    OM --> RC
+    
+    OM --> ES
+    ES --> QS
+    QS --> NM
+    QS --> RQ
+    
+    OM --> PS
