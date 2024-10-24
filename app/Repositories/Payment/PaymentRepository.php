@@ -15,8 +15,8 @@ class PaymentRepository extends BaseRepository
     {
         $payments = $this->payment->query();
 
-        if (request()->filled('name')) {
-            $payments->where('transaction_id', 'like', '%' . $request['name'] . '%');
+        if (request()->filled('transaction_id')) {
+            $payments->where('transaction_id', 'like', '%' . $request['transaction_id'] . '%');
         }
 
         if (request()->filled('sortOrder')) {

@@ -15,4 +15,8 @@ return [
         'default_cache_tag_prefix' => 'User:',
         'default_cache_time'       => 60 * 10,
     ],
+    'payment' => [
+        'default_cache_tag_prefix' => 'Payment:',
+        'default_cache_time'       => 60 * 10,
+    ],
 ];

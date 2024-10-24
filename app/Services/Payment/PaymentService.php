@@ -2,7 +2,7 @@
 
 namespace App\Services\Payment;
 
-use App\Repositories\Product\PaymentRepository;
+use App\Repositories\Payment\PaymentRepository;
 use Illuminate\Support\Arr;
 
 class PaymentService
@@ -11,25 +11,25 @@ class PaymentService
 
     public function index(array $request)
     {
-        $productCacheListTag = config('constants.product.default_cache_tag_prefix');
+        $paymentCacheListTag = config('constants.payment.default_cache_tag_prefix');
 
         if (!empty($request['limit'])) {
-            $productCacheListTag = $productCacheListTag . 'ProductListPaginated';
+            $paymentCacheListTag = $paymentCacheListTag . 'PaymentListPaginated';
         }
 
-        $cacheKey = generateCacheKey(Arr::only($request, ['name']));
-        $cacheData = getCache($productCacheListTag, $cacheKey);
+        $cacheKey = generateCacheKey(Arr::only($request, ['transaction_id']));
+        $cacheData = getCache($paymentCacheListTag, $cacheKey);
 
         if ($cacheData) {
-            logger()->info('ProductList: get data from cache', [$productCacheListTag, $cacheKey]);
+            logger()->info('PaymentList: get data from cache', [$paymentCacheListTag, $cacheKey]);
             return $cacheData;
         }
 
-        logger()->info('ProductList: get data from database');
-        $products = $this->paymentRepository->index($request);
-        putCache($productCacheListTag, $cacheKey, $products, config('constants.product.default_cache_time'));
+        logger()->info('PaymentList: get data from database');
+        $payments = $this->paymentRepository->index($request);
+        putCache($paymentCacheListTag, $cacheKey, $payments, config('constants.payment.default_cache_time'));
 
-        return $products;
+        return $payments;
     }
 
     public function store(array $request)
