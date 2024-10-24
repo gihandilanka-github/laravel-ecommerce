@@ -23,10 +23,12 @@ if (!function_exists('putCache')) {
         }
 
         if (config('cache.default') === 'file') {
+            dd("P");
             return cache([generateCacheKey($cacheKey) => $cacheData], $time);
         }
 
         if (config('cache.default') != 'redis') {
+            dd("Q");
             return false;
         }
 
