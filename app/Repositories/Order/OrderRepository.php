@@ -24,8 +24,8 @@ use Throwable;
 class OrderRepository extends BaseRepository
 {
     private const ALLOWED_STATUS_TRANSITIONS = [
-        'pending' => ['processing', 'cancelled'],
-        'processing' => ['shipped', 'cancelled'],
+        'pending' => ['processed', 'cancelled'],
+        'processed' => ['shipped', 'cancelled'],
         'shipped' => ['delivered', 'returned'],
         'delivered' => ['returned'],
         'returned' => [],

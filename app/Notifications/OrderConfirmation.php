@@ -25,9 +25,6 @@ class OrderConfirmation extends Notification implements ShouldQueue
     {
         return (new MailMessage)
             ->subject('Order Confirmation #' . $this->order->id)
-            ->line('Thank you for your order!')
-            ->line('Order Total: $' . $this->order->total_amount)
-            ->action('View Order', url('/orders/' . $this->order->id))
-            ->line('We will notify you when your order ships.');
+            ->markdown('emails.order.order-confirmed', ['order' => $this->order]);
     }
 }

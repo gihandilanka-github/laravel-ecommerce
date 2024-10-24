@@ -25,7 +25,6 @@ class StatusUpdateNotification extends Notification implements ShouldQueue
     {
         return (new MailMessage)
             ->subject('Your order has been ' . $this->order->status)
-            ->line('Thank you for your patience!')
-            ->action('View Order', url('/orders/' . $this->order->id));
+            ->markdown('emails.order.status-update', ['order' => $this->order]);
     }
 }

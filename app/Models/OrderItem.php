@@ -12,4 +12,9 @@ class OrderItem extends BaseModel
     {
         return $this->belongsTo(Order::class, 'order_id', 'id');
     }
+
+    public function product(): BelongsTo
+    {
+        return $this->belongsTo(Product::class, 'product_id', 'id');
+    }
 }
