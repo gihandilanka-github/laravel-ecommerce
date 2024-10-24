@@ -34,6 +34,12 @@ class OrderRepository extends BaseRepository
 
     public function __construct(protected Order $order) {}
 
+    /**
+     * Retrieve a list of orders with optional filters and sorting.
+     *
+     * @param  array  $request
+     * @return Collection|LengthAwarePaginator
+     */
     public function index(array $request): Collection|LengthAwarePaginator
     {
         $orders = $this->order->query();
@@ -57,7 +63,18 @@ class OrderRepository extends BaseRepository
         return $orders->paginate($request['limit']);
     }
 
-    public function createOrder(User $user, array $request)
+    /**
+     * Create a new order.
+     *
+     * @param  User  $user
+     * @param  array  $request
+     *
+     * @return \App\Models\Order
+     *
+     * @throws \App\Exceptions\Order\InsufficientStockException
+     * @throws \App\Exceptions\Payment\PaymentFailedException
+     */
+    public function createOrder(User $user, array $request): Order
     {
         DB::beginTransaction();
         try {
@@ -125,6 +142,14 @@ class OrderRepository extends BaseRepository
         }
     }
 
+    /**
+     * Process a payment for a given order.
+     *
+     * @param  Order  $order
+     * @param  string  $paymentMethod
+     *
+     * @throws \App\Exceptions\Payment\PaymentFailedException
+     */
     private function processPayment(Order $order, string $paymentMethod): void
     {
         try {
@@ -146,11 +171,30 @@ class OrderRepository extends BaseRepository
         }
     }
 
+    /**
+     * Check if a status transition is valid.
+     *
+     * @param  string  $currentStatus
+     * @param  string  $newStatus
+     *
+     * @return bool
+     */
     private function isValidStatusTransition(string $currentStatus, string $newStatus): bool
     {
         return in_array($newStatus, self::ALLOWED_STATUS_TRANSITIONS[$currentStatus] ?? []);
     }
 
+    /**
+     * Update the status of a specific order.
+     *
+     * @param  int  $orderId
+     * @param  string  $status
+     *
+     * @return \App\Models\Order
+     *
+     * @throws \App\Exceptions\Order\ModelNotFoundException
+     * @throws \App\Exceptions\Order\InvalidOrderStatusTransitionException
+     */
     public function updateOrderStatus(int $orderId, string $status): Order
     {
         try {
@@ -177,6 +221,15 @@ class OrderRepository extends BaseRepository
         }
     }
 
+    /**
+     * Retrieve a specific order.
+     *
+     * @param  int  $id
+     *
+     * @return \App\Models\Order
+     *
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
+     */
     public function show(int $id): Order
     {
         return $this->order->find($id);

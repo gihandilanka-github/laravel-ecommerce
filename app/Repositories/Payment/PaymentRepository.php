@@ -11,6 +11,12 @@ class PaymentRepository extends BaseRepository
 {
     public function __construct(protected Payment $payment) {}
 
+    /**
+     * Retrieve a list of payments with optional filters and sorting.
+     *
+     * @param array $request
+     * @return Collection|LengthAwarePaginator
+     */
     public function index(array $request): Collection|LengthAwarePaginator
     {
         $payments = $this->payment->query();
@@ -34,12 +40,24 @@ class PaymentRepository extends BaseRepository
         return $payments->paginate($request['limit']);
     }
 
-    public function create(array $request)
+    /**
+     * Create a new payment record.
+     *
+     * @param array $request
+     * @return \App\Models\Payment
+     */
+    public function create(array $request): Payment
     {
         return $this->payment->create($request);
     }
 
-    public function show(int $id): payment
+    /**
+     * Retrieve a single payment.
+     *
+     * @param int $id
+     * @return \App\Models\Payment
+     */
+    public function show(int $id): Payment
     {
         return $this->payment->find($id);
     }

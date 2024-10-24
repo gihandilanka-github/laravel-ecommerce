@@ -3,13 +3,21 @@
 namespace App\Services\Payment;
 
 use App\Repositories\Payment\PaymentRepository;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Arr;
 
 class PaymentService
 {
     public function __construct(protected PaymentRepository  $paymentRepository) {}
 
-    public function index(array $request)
+    /**
+     * Retrieve a list of payments with optional filters and sorting.
+     *
+     * @param array $request
+     * @return Collection|LengthAwarePaginator
+     */
+    public function index(array $request): Collection|LengthAwarePaginator
     {
         $paymentCacheListTag = config('constants.payment.default_cache_tag_prefix');
 
@@ -32,16 +40,31 @@ class PaymentService
         return $payments;
     }
 
+    /**
+     * Create a new payment record.
+     *
+     * @param array $request
+     * @return \App\Models\Payment
+     */
     public function store(array $request)
     {
         return $this->paymentRepository->create($request);
     }
 
-    public function ensureUniqueSlug(string $slug, $id = null): string
-    {
-        return $this->paymentRepository->ensureUniqueSlug($slug, $id);
-    }
+    /**
+     * Generate a unique slug, given a string and an optional ID.
+     *
+     * @param string $slug
+     * @param int|null $id
+     * @return string
+     */
 
+    /**
+     * Retrieve a single payment by its ID.
+     *
+     * @param int $id
+     * @return \App\Models\Payment
+     */
     public function show(int $id)
     {
         return $this->paymentRepository->show($id);

@@ -2,14 +2,23 @@
 
 namespace App\Services\User;
 
+use App\Models\User;
 use App\Repositories\User\UserRepository;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Arr;
 
 class UserService
 {
     public function __construct(protected UserRepository $userRepository) {}
 
-    public function index(array $request)
+    /**
+     * Retrieve a list of users with optional filters and sorting.
+     *
+     * @param  array  $request
+     * @return Collection|LengthAwarePaginator
+     */
+    public function index(array $request): Collection|LengthAwarePaginator
     {
         $userCacheListTag = config('constants.user.default_cache_tag_prefix');
 
@@ -30,7 +39,13 @@ class UserService
         putCache($userCacheListTag, $cacheKey, $users, config('constants.user.default_cache_time'));
     }
 
-    public function show(int $id)
+    /**
+     * Retrieve a specific user.
+     *
+     * @param  int  $id
+     * @return \App\Models\User
+     */
+    public function show(int $id): User
     {
         return $this->userRepository->show($id);
     }

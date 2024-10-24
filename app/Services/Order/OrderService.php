@@ -5,13 +5,21 @@ namespace App\Services\Order;
 use App\Models\Order;
 use App\Repositories\Order\OrderRepository;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Arr;
 
 class OrderService
 {
     public function __construct(protected OrderRepository  $orderRepository) {}
 
-    public function index(array $request)
+    /**
+     * Get a list of orders.
+     *
+     * @param  array  $request
+     *
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function index(array $request): Collection
     {
         $orderCacheListTag = config('constants.order.default_cache_tag_prefix');
 
@@ -34,16 +42,39 @@ class OrderService
         return $orders;
     }
 
-    public function createOrder(User $user, array $request)
+    /**
+     * Create a new order.
+     *
+     * @param  User  $user
+     * @param  array  $request
+     *
+     * @return \App\Models\Order
+     */
+    public function createOrder(User $user, array $request): Order
     {
         return $this->orderRepository->createOrder($user, $request);
     }
 
-    public function updateOrderStatus(int $orderId, string $status)
+    /**
+     * Update the status of a specific order.
+     *
+     * @param  int  $orderId
+     * @param  string  $status
+     *
+     * @return \App\Models\Order
+     */
+    public function updateOrderStatus(int $orderId, string $status): Order
     {
         return $this->orderRepository->updateOrderStatus($orderId, $status);
     }
 
+    /**
+     * Get a specific order.
+     *
+     * @param  int  $id
+     *
+     * @return \App\Models\Order
+     */
     public function show(int $id)
     {
         return $this->orderRepository->show($id);

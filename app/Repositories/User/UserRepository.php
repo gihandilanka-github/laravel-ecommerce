@@ -11,6 +11,12 @@ class UserRepository extends BaseRepository
 {
     public function __construct(protected User $user) {}
 
+    /**
+     * Retrieve a list of users with optional filters and sorting.
+     *
+     * @param array $request
+     * @return Collection|LengthAwarePaginator
+     */
     public function index(array $request): Collection|LengthAwarePaginator
     {
         $users = $this->user->query();
@@ -38,6 +44,13 @@ class UserRepository extends BaseRepository
         return $users->paginate($request['limit']);
     }
 
+    /**
+     * Retrieve a specific user.
+     *
+     * @param int $id
+     * 
+     * @return \App\Models\User
+     */
     public function show(int $id): User
     {
         return $this->user->find($id);
