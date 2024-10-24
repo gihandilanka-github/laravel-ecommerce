@@ -13,12 +13,24 @@ class UserController extends Controller
 
     public function __construct(protected UserService $userService) {}
 
-    public function index(UserIndexRequest $request)
+    /**
+     * Retrieve a list of users.
+     *
+     * @param  UserIndexRequest  $request
+     * @return UserCollection
+     */
+    public function index(UserIndexRequest $request): UserCollection
     {
         return new UserCollection($this->userService->index($request->all()));
     }
 
-    public function show(int $id)
+    /**
+     * Retrieve a single user.
+     *
+     * @param  int  $id
+     * @return UserResource
+     */
+    public function show(int $id): UserResource
     {
         return new UserResource($this->userService->show($id));
     }

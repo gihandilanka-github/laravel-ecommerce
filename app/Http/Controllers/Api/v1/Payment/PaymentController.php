@@ -13,12 +13,24 @@ class PaymentController extends Controller
 {
     public function __construct(protected PaymentService $paymentService) {}
 
-    public function index(PaymentIndexRequest $request)
+    /**
+     * Retrieve a list of payments.
+     *
+     * @param  PaymentIndexRequest  $request
+     * @return PaymentCollection
+     */
+    public function index(PaymentIndexRequest $request): PaymentCollection
     {
         return new PaymentCollection($this->paymentService->index($request->validated()));
     }
 
-    public function show(int $id)
+    /**
+     * Retrieve a single payment.
+     *
+     * @param  int  $id
+     * @return PaymentResource
+     */
+    public function show(int $id): PaymentResource
     {
         return new PaymentResource($this->paymentService->show($id));
     }

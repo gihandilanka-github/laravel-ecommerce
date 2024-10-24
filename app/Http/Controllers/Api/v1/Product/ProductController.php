@@ -13,17 +13,35 @@ class ProductController extends Controller
 {
     public function __construct(protected ProductService $productService) {}
 
-    public function index(ProductIndexRequest $request)
+    /**
+     * Retrieve a list of products.
+     *
+     * @param  ProductIndexRequest  $request
+     * @return ProductCollection
+     */
+    public function index(ProductIndexRequest $request): ProductCollection
     {
         return new ProductCollection($this->productService->index($request->validated()));
     }
 
-    public function store(ProductCreateRequest $request)
+    /**
+     * Create a new product.
+     *
+     * @param  ProductCreateRequest  $request
+     * @return ProductResource
+     */
+    public function store(ProductCreateRequest $request): ProductResource
     {
         return new ProductResource($this->productService->store($request->validated()));
     }
 
-    public function show(int $id)
+    /**
+     * Retrieve a single product.
+     *
+     * @param  int  $id
+     * @return ProductResource
+     */
+    public function show(int $id): ProductResource
     {
         return new ProductResource($this->productService->show($id));
     }
